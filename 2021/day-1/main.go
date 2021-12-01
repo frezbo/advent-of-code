@@ -10,7 +10,9 @@ import (
 
 func main() {
 	var file string
-	flag.StringVar(&file, "file", "", "file to read")
+	var stage int
+	flag.StringVar(&file, "file", "input.txt", "file to read")
+	flag.IntVar(&stage, "stage", 1, "stage to run")
 	flag.Parse()
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -29,11 +31,26 @@ func main() {
 		}
 
 	}
+
 	counter := 0
-	for i := 0; i < len(input)-1; i++ {
-		if input[i+1] > input[i] {
-			counter++
+
+	switch stage {
+	case 1:
+
+		for i := 0; i < len(input)-1; i++ {
+			if input[i+1] > input[i] {
+				counter++
+			}
 		}
+	case 2:
+		for i := 0; i < len(input)-3; i++ {
+			if (input[i+1] + input[i+2] + input[i+3]) > (input[i] + input[i+1] + input[i+2]) {
+				counter++
+			}
+		}
+	default:
+		fmt.Println("Invalid stage")
 	}
+
 	fmt.Println(counter)
 }
