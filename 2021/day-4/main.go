@@ -56,10 +56,15 @@ func main() {
 			boards = append(boards, board)
 		}
 	}
+	if soln := firstWinner(boards, randomInput); soln != -1 {
+		fmt.Println(soln)
+	} else {
+		fmt.Println("should never reach here")
+	}
+}
 
-	start := 0
-	peek := 5
-	for i := start; i < peek; i++ {
+func firstWinner(boards [][][]map[int]bool, randomInput []int) int {
+	for i := 0; i < len(randomInput); i++ {
 		for b := 0; b < len(boards); b++ {
 			for c := 0; c < len(boards[b]); c++ {
 
@@ -81,8 +86,8 @@ func main() {
 									}
 								}
 							}
-							fmt.Println(sum * randomInput[i])
-							return
+
+							return sum * randomInput[i]
 						}
 
 					}
@@ -90,14 +95,8 @@ func main() {
 				}
 			}
 		}
-		start = peek
-		if peek < len(randomInput) {
-			peek = peek + start + 1
-		} else {
-			peek = len(randomInput)
-		}
 	}
-	fmt.Println("should never reach here")
+	return -1
 }
 
 func allMarked(board [][]map[int]bool) bool {
