@@ -31,28 +31,8 @@ func main() {
 		}
 	}
 
-	// horizonal pos, cost
-	fuelCosts := make(map[int]int)
-	for i := 1; i <= largest(horizonalPos); i++ {
-		// for i := 2; i <= 2; i++ {
-		cost := 0
-		for _, j := range horizonalPos {
-			delta := j - i
-			if delta < 0 {
-				delta *= -1
-			}
-			cost += delta
-		}
-		fuelCosts[i] = cost
-	}
-	smallest := fuelCosts[1]
-	for _, v := range fuelCosts {
-		if v < smallest {
-			smallest = v
-		}
-	}
-	fmt.Println(smallest)
-
+	fmt.Println(findSmallestCost(horizonalPos, false))
+	fmt.Println(findSmallestCost(horizonalPos, true))
 }
 
 func largest(values []int) int {
@@ -63,4 +43,30 @@ func largest(values []int) int {
 		}
 	}
 	return largest
+}
+
+func findSmallestCost(input []int, cumulative bool) int {
+	fuelCosts := make(map[int]int)
+	for i := 1; i <= largest(input); i++ {
+		cost := 0
+		for _, j := range input {
+			delta := j - i
+			if delta < 0 {
+				delta *= -1
+			}
+			if cumulative {
+				cost += (delta * (delta + 1)) / 2
+			} else {
+				cost += delta
+			}
+		}
+		fuelCosts[i] = cost
+	}
+	smallest := fuelCosts[1]
+	for _, v := range fuelCosts {
+		if v < smallest {
+			smallest = v
+		}
+	}
+	return smallest
 }
