@@ -9,7 +9,7 @@ import (
 )
 
 type Coordinates struct {
-	Verticals, Horizontals []Coordinate
+	Verticals, Horizontals, Diagonals []Coordinate
 }
 
 type CoordinatePair struct {
@@ -62,23 +62,9 @@ func main() {
 			if x1 == x2 {
 				var coordinatePair CoordinatePair
 				if y1 < y2 {
-					coordinatePair.Start = Coordinate{
-						X: x1,
-						Y: y1,
-					}
-					coordinatePair.End = Coordinate{
-						X: x2,
-						Y: y2,
-					}
+					coordinatePair = genCoordinatePair(x1, y1, x2, y2, false)
 				} else {
-					coordinatePair.End = Coordinate{
-						X: x1,
-						Y: y1,
-					}
-					coordinatePair.Start = Coordinate{
-						X: x2,
-						Y: y2,
-					}
+					coordinatePair = genCoordinatePair(x1, y1, x2, y2, true)
 				}
 				for i := coordinatePair.Start.Y; i <= coordinatePair.End.Y; i++ {
 					coordinates.Verticals = append(coordinates.Verticals, Coordinate{
@@ -87,34 +73,60 @@ func main() {
 					})
 				}
 
-			}
-
-			if y1 == y2 {
+			} else if y1 == y2 {
 				var coordinatePair CoordinatePair
 				if x1 < x2 {
-					coordinatePair.Start = Coordinate{
-						X: x1,
-						Y: y1,
-					}
-					coordinatePair.End = Coordinate{
-						X: x2,
-						Y: y2,
-					}
+					coordinatePair = genCoordinatePair(x1, y1, x2, y2, false)
 				} else {
-					coordinatePair.End = Coordinate{
-						X: x1,
-						Y: y1,
-					}
-					coordinatePair.Start = Coordinate{
-						X: x2,
-						Y: y2,
-					}
+					coordinatePair = genCoordinatePair(x1, y1, x2, y2, true)
 				}
 				for i := coordinatePair.Start.X; i <= coordinatePair.End.X; i++ {
 					coordinates.Horizontals = append(coordinates.Horizontals, Coordinate{
 						X: i,
 						Y: coordinatePair.Start.Y,
 					})
+				}
+			} else {
+				coordinatePair := genCoordinatePair(x1, y1, x2, y2, false)
+
+				if x1 > x2 && y1 < y2 {
+					x := coordinatePair.Start.X
+					for y := coordinatePair.Start.Y; y <= coordinatePair.End.Y; y++ {
+						coordinates.Diagonals = append(coordinates.Diagonals, Coordinate{
+							X: x,
+							Y: y,
+						})
+						x--
+					}
+				} else if x1 > x2 && y1 > y2 {
+					y := coordinatePair.Start.Y
+					for x := coordinatePair.Start.X; x >= coordinatePair.End.X; x-- {
+						coordinates.Diagonals = append(coordinates.Diagonals, Coordinate{
+							X: x,
+							Y: y,
+						})
+						y--
+					}
+				} else if x1 < x2 && y1 < y2 {
+					y := coordinatePair.Start.Y
+					for x := coordinatePair.Start.X; x <= coordinatePair.End.X; x++ {
+						coordinates.Diagonals = append(coordinates.Diagonals, Coordinate{
+							X: x,
+							Y: y,
+						})
+						y++
+					}
+
+				} else if x1 < x2 && y1 > y2 {
+					x := coordinatePair.Start.X
+					for y := coordinatePair.Start.Y; y >= coordinatePair.End.Y; y-- {
+						coordinates.Diagonals = append(coordinates.Diagonals, Coordinate{
+							X: x,
+							Y: y,
+						})
+						x++
+					}
+
 				}
 			}
 		}
@@ -136,4 +148,41 @@ func main() {
 	}
 	fmt.Println(count)
 
+	// part B
+	for _, c := range coordinates.Diagonals {
+		seen[c]++
+	}
+	count = 0
+	for _, v := range seen {
+		if v >= 2 {
+			count++
+		}
+	}
+	fmt.Println(count)
+}
+
+func genCoordinatePair(x1, y1, x2, y2 int, rev bool) CoordinatePair {
+	var coordinatePair CoordinatePair
+
+	if rev {
+		coordinatePair.End = Coordinate{
+			X: x1,
+			Y: y1,
+		}
+		coordinatePair.Start = Coordinate{
+			X: x2,
+			Y: y2,
+		}
+	} else {
+		coordinatePair.Start = Coordinate{
+			X: x1,
+			Y: y1,
+		}
+		coordinatePair.End = Coordinate{
+			X: x2,
+			Y: y2,
+		}
+	}
+
+	return coordinatePair
 }
